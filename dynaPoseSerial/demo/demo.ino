@@ -7,7 +7,6 @@
 
 BioloidController bioloid = BioloidController(1000000);
 
-
 int poseData[SERVO_COUNT][POSE_COUNT] ;
 
 int servoError = 0 ; // 0 = no errors, continue with the program. 1 = error on at least one servo 
@@ -17,6 +16,9 @@ int nextSavePose;
 int mode = 0; // mode for the serial input. 0 = normal menu mode. 2 = speed change mode
 int bioloidDelay = 5000;
 int torqueCount = 1; //a counter for when a user turns the torque on
+
+//============================================================================================================
+//============================================================================================================
 
 void setup()
 {
@@ -31,10 +33,6 @@ void setup()
       poseData[i][j] = -1;
     }
   }
-
-
-
-
   
   Serial.println("  _______     ___   _          _____               ");
   Serial.println(" |  __ \\ \\   / / \\ | |   /\\   |  __ \\              ");
@@ -42,8 +40,6 @@ void setup()
   Serial.println(" | |  | |\\   / | . ` | / /\\ \\ |  ___/ _ \\/ __|/ _ \\ ");
   Serial.println(" | |__| | | |  | |\\  |/ ____ \\| |  | (_) \\__ \\  __/ ");
   Serial.println(" |_____/  |_|  |_| \\_/_/    \\_\\_|   \\___/|___/\\___| ");
-  
-  
   
   Serial.println("Current DYNAPose Settings:");
   Serial.print("  Number of Servos:");
@@ -53,6 +49,7 @@ void setup()
   Serial.print("  Default Pose-to-Pose Delay:");
   Serial.println(bioloidDelay);
   Serial.print("  Error-Bit Checking:");
+  
   if(ERROR_BIT_CHECK == 1)
   {
     Serial.println("On");
@@ -62,9 +59,6 @@ void setup()
     Serial.println("Off");
   }
   Serial.println("----------");
-  
-  
-
   
   delay(100);  //delay to wait for DYNAMIXEL initialization 
   
@@ -78,21 +72,17 @@ void setup()
     checkVoltage();
   }
   
-  
   if(servoError == 0)
   {  
     relaxServos(); //start servos in relaxed state
-    displayMenu();
-      
-    
+    displayMenu();    
   }
-
-
-
   
-  
-        
 }
+
+
+//============================================================================================================
+//============================================================================================================
 
 void loop() 
 {
@@ -102,70 +92,74 @@ void loop()
     //Any option that needs additional keyboard input (like speed control) will have a mode
     //equivalent to its menu option.
     
-  
     //mode == 0 is for the normal menu interface
     if(mode == 0)
     {
-            
-      int inByte = Serial.read();       
+      Serial.println("get into mode 0");
+      int inByte = Serial.read(); 
+      
       switch (inByte)
       {
         case '0':    
-          relaxServos();
+          Serial.println("mode 0");
+          relaxServos();          
         break;    
     
         case '1':
-          torqueServos(); 
+          Serial.println("mode 1");
+          torqueServos();         
         break;
     
         case '2':
+          Serial.println("mode 2");
           savePose();
         break;
         
         case '3':
-          displayPoses();
+          Serial.println("mode 3");
+          displayPoses();        
         break;
         
-        
         case '4':
+          Serial.println("mode 4");
           playPosesOnce(0);
         break;  
         
-        
         case '5':
-          playPosesRepeat();
+          Serial.println("mode 5");
+          playPosesRepeat();        
         break;  
         
-        
         case '6':
+          Serial.println("mode 6");
           mode = 7;
           Serial.println("Enter a value 500-10000 for the delay between eash pose in ms");
         break;  
         
-        
         case '7':
+          Serial.println("mode 7");
           mode = 8;
           Serial.print("Enter a number between 1 and ");
           Serial.println(POSE_COUNT);
         break;  
         
-        
         case '8':
+          Serial.println("mode 8");
           centerServos();
         break;  
         
         case '9':
+          Serial.println("mode 9");
           checkServos();
         break;  
-        
-        
-      }   
-        
+      }
+      
     }
     
     //mode 7 is for speed control - this is just used for testing during playback
     else if (mode == 7)
     {
+      Serial.println("get into mode 7");
       int tempBioloidDelay = Serial.parseInt();
       if (tempBioloidDelay > 499 && tempBioloidDelay < 10001)
       {
@@ -174,20 +168,17 @@ void loop()
         Serial.println(bioloidDelay);
         mode = 0; //return to menu mode
         displayMenu();
-
       } 
       else
       {
-        Serial.println("Plesse enter a delay value between 500 and 10000");
-
-        
+        Serial.println("Plesse enter a delay value between 500 and 10000"); 
       }
-      
     }
     
     //mode 8 is for setting the next pose to save to manually
     else if (mode == 8)
     {
+      Serial.println("get into mode 8");
       int tempnextSavePose = Serial.parseInt();
       if (tempnextSavePose > 1 && tempnextSavePose < POSE_COUNT+1)
       {
@@ -200,22 +191,22 @@ void loop()
       } 
       else
       {
-          Serial.print("Enter a number between 1 and ");
-          Serial.println(POSE_COUNT);
-      }
-      
+        Serial.println("get into mode 9");
+        Serial.print("Enter a number between 1 and ");
+        Serial.println(POSE_COUNT);
+      }  
     }
-    
-    
-    
+   
+  Serial.println("end of while loop");    
   }
-  
+  //Serial.println("end of loop");
 }
 
+//============================================================================================================
+//============================================================================================================
 
 void checkServos()
 {
-  
   Serial.print("Looking for Servos 1 - ");
   Serial.println(SERVO_COUNT);
   
@@ -236,36 +227,29 @@ void checkServos()
     //if all servos are found, then 'servoError' remains '0' i.e. no error 
     
     delay(10); //short pause before the next loop / dynamixel call
-    
-    
+       
     if(ERROR_BIT_CHECK == 1)
-    {
-      
+    {    
       int errorBit = ax12GetLastError();
       Serial.print("    Servo # ");
-        Serial.print(id);
-  
+      Serial.print(id);
   
       Serial.print("     Error Bit:");
       Serial.println(errorBit);
       
-      
       if(ERR_NONE & errorBit == 0)
       {
         Serial.println("          No Errors Found");
-  
       }
       
       if(ERR_VOLTAGE & errorBit)
       {
         Serial.println("          Voltage Error");
-  
       }
       
       if(ERR_ANGLE_LIMIT & errorBit)
       {
         Serial.println("          Angle Limit Error");
-  
       }
       
       if(ERR_OVERHEATING & errorBit)
@@ -292,14 +276,11 @@ void checkServos()
   
       }
       
-      
       if(ERR_INSTRUCTION & errorBit)
       {
         Serial.println("          Instruction Error");
-  
       }
     }
-    
   }
   
   //if all servos are found, display a success message
@@ -307,14 +288,12 @@ void checkServos()
   {
     Serial.print("All ");
     Serial.print(SERVO_COUNT);
-    Serial.println(" servos located");
-    
+    Serial.println(" servos located"); 
   }
   
   //if any of the servos are missing, display an error message
   else
-  {
-    
+  { 
     Serial.println("Servo(s) are missing and/or not IDed properly");
   }
   
@@ -555,19 +534,13 @@ void playPosesRepeat()
    if(playPosesOnce(i++) == 1)
    {
     return; 
-   }
-  
-  
-
-
+   }  
  } 
- 
- 
+  
 }
 
-
-
-void checkVoltage(){  
+void checkVoltage()
+{  
    // wait, then check the voltage (LiPO safety)
   float voltage = (ax12GetRegister (1, AX_PRESENT_VOLTAGE, 1)) / 10.0;
 
@@ -575,23 +548,22 @@ void checkVoltage(){
   Serial.print ("System Voltage: ");
   Serial.print (voltage);
   Serial.println (" volts.");
+
   if (voltage < 10.0)
   {
 
     Serial.println("Voltage levels below 10v, please charge battery.");
     Serial.println("----------");
     servoError == 1;
-  }  
+  }
+  
   if (voltage > 10.0)
   {
-
     Serial.println("Voltage levels nominal.");
     Serial.println("----------");
   }
    
   delay(10); //short pause before the next loop / dynamixel call
-  
-
 }
 
 
