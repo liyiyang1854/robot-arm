@@ -18,6 +18,7 @@ int bioloidDelay = 5000;
 int torqueCount = 1; //a counter for when a user turns the torque on
 
 //============================================================================================================
+int incomingByte = 0;
 //============================================================================================================
 
 void setup()
@@ -86,6 +87,17 @@ void setup()
 
 void loop() 
 {
+   if (Serial.available() > 0) 
+   {
+     // read the incoming byte:
+     incomingByte = Serial.read();
+
+     // say what you got:
+     Serial.print("I received: ");
+     Serial.println(incomingByte,DEC);
+   }
+   
+  /*
   while(servoError == 0 && Serial.available())
   {
     //For most executions, the program will be in mode '0', and execute the main menu options
@@ -199,6 +211,7 @@ void loop()
    
   Serial.println("end of while loop");    
   }
+  */
   //Serial.println("end of loop");
 }
 
@@ -637,3 +650,4 @@ void centerServos()
          
   Serial.println("Servos are Centered");
 }
+
