@@ -18,9 +18,7 @@ int bioloidDelay = 5000;
 int torqueCount = 1; //a counter for when a user turns the torque on
 
 //============================================================================================================
-//string incomingLong = 0;
-char * buffer;
-int temp;
+String temp; 
 //============================================================================================================
 
 void setup()
@@ -92,7 +90,7 @@ void loop()
    if (Serial.available() > 0) 
    {
      // read the incoming byte:
-     temp = Serial.readBytes(buffer,2);
+     temp = Serial.readString();
      
      // say what you got:
      Serial.print("I received: ");
