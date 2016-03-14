@@ -94,7 +94,7 @@ void loop()
      
      // say what you got:
      Serial.print("I received: ");
-     Serial.println(temp,DEC);
+     Serial.println(temp);
      Serial.println("end of if");
    }
    //Serial.println("end of loop");
