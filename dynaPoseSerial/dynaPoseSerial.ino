@@ -105,8 +105,8 @@ void loop()
   
     //mode == 0 is for the normal menu interface
     if(mode == 0)
-    {
-            
+    {  
+      Serial.print("mode 0");      
       int inByte = Serial.read();       
       switch (inByte)
       {
