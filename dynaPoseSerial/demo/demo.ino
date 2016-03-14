@@ -19,6 +19,7 @@ int torqueCount = 1; //a counter for when a user turns the torque on
 
 //============================================================================================================
 int incomingByte = 0;
+int temp = 0;
 //============================================================================================================
 
 void setup()
@@ -62,7 +63,7 @@ void setup()
   Serial.println("----------");
   
   delay(100);  //delay to wait for DYNAMIXEL initialization 
-  
+  /*
   if(servoError == 0)
   {
     checkServos();  
@@ -78,7 +79,7 @@ void setup()
     relaxServos(); //start servos in relaxed state
     displayMenu();    
   }
-  
+  */
 }
 
 
@@ -91,12 +92,16 @@ void loop()
    {
      // read the incoming byte:
      incomingByte = Serial.read();
-
+     temp = Serial.read();
      // say what you got:
      Serial.print("I received: ");
      Serial.println(incomingByte,DEC);
+     Serial.print("I received: ");
+     Serial.println(temp,DEC);
+     Serial.println("end of if");
    }
-   
+   //Serial.println("end of loop");
+}  
   /*
   while(servoError == 0 && Serial.available())
   {
@@ -211,13 +216,14 @@ void loop()
    
   Serial.println("end of while loop");    
   }
-  */
+  
   //Serial.println("end of loop");
 }
+*/
 
 //============================================================================================================
 //============================================================================================================
-
+/*
 void checkServos()
 {
   Serial.print("Looking for Servos 1 - ");
@@ -650,4 +656,4 @@ void centerServos()
          
   Serial.println("Servos are Centered");
 }
-
+*/
