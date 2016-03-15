@@ -1,12 +1,11 @@
 #include <ax12.h>
 
-//============================================================================================================
-String temp = "0512"; 
+//===========================================================================
+String instring; 
 int servo_num;
 int cur_pos;
 int desire_pos;
-//============================================================================================================
-
+//===========================================================================
 void setup()
 {
   delay(100);
@@ -14,43 +13,56 @@ void setup()
   delay(100);
   
   SetPosition(1,512);
-  Serial.print("setting up done");
+  Serial.println("setting up done");
   delay(1000);
 }
 
 
-//============================================================================================================
-//============================================================================================================
-
+//============================================================================
+//============================================================================
 void loop() 
 {
+  
   if (Serial.available() > 0) 
   {
+    Serial.println("get Serial");
     // read the incoming byte:
-    temp = Serial.readString();
+    instring = Serial.readString();
     
     // say what you got:
-    Serial.print("I received: "+temp+" in int "+temp.toInt());
-    
-    char c = temp[0];
+    Serial.print("I received: ");
+    Serial.print(instring);   
+    char c = instring[0];
     servo_num = (int)c-48;
-    Serial.print("I received: "+servo_num);
+    Serial.print("servo number: ");
+    Serial.println(servo_num);
     
-    int len = temp.length();
-    Serial.print("temp length: "+len);
-    desire_pos = temp.toInt() - servo_num*(10^(len-1)); 
-    Serial.print("desired postion: "+desire_pos);
+    int len = instring.length();
+    Serial.print("temp length: ");
+    Serial.println(len);
+    
+    int temp = instring.toInt(); 
+    Serial.print("instring in integer: ");
+    Serial.println(temp);
+    int s = servo_num*pow(10,len-2);
+    Serial.print("redundant part: ");
+    Serial.println(s); 
+    desire_pos = temp - s;
+    Serial.print("desired postion: ");
+    Serial.println(desire_pos);
+    
     cur_pos = GetPosition(servo_num);  
-    Serial.println("get position: "+cur_pos);
-    
+    Serial.print("current position: ");
+    Serial.println(cur_pos);
+     
     Serial.println("Start to adjust servo");
     if (cur_pos < desire_pos)
     {
       for(int i=cur_pos;i<desire_pos;i++)
       {
         SetPosition(servo_num,i);
-        delay(100);
       }
+      Serial.println("set");
       delay(1000);
     }
     else if (cur_pos > desire_pos)
@@ -58,11 +70,13 @@ void loop()
       for(int i= cur_pos; i > desire_pos; i--)
       {
         SetPosition(servo_num,i);
-        delay(100);
       }
+      Serial.println("set");
       delay(1000);
     }
-    Serial.print("done");
+    Serial.println("done");
+    Serial.println("--------------------------");
+    
   }
   
 }  
