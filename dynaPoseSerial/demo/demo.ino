@@ -183,7 +183,7 @@ void loop()
         Serial.println("done");
         Serial.println("================================================");
     }
-
+    Serial.flush(); //clear the serial input buffer 
   }
  
   
