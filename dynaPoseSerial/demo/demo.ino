@@ -29,6 +29,9 @@ void loop()
 {
   delay(1000);
   Serial.println("loop");
+  
+  run = 1;
+  
   if (Serial.available() > 0) 
   {
     Serial.println("get Serial");
@@ -162,9 +165,9 @@ void loop()
            {
              SetPosition(servo_num2,1024-i);
            }
-          }
-          Serial.println("set");
-          delay(1000);
+         }
+         Serial.println("set");
+         delay(1000);
         }   
         else if (cur_pos > desire_pos)
         {
