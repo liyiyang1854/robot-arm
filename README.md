@@ -1,11 +1,11 @@
 # robot-arm
+file path: robot-arm/dynaPoseSerial/demo/demo.ino
 
-Created a repository on GitHub
-Cloned the repository locally on your computer
+able to control the robot arm through serial communicaiton
 
-Open Terminal
-Change the current working directory to your local repository
-
-git add .
-git commit -m "message"
-git push origin master
+example:
+  input: "1512"
+  output: move servo 1 from current position to position 512
+  
+  input: "23512"
+  output: move servo 2 and servo 3 from their current positions to position 512
