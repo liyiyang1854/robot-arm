@@ -32,8 +32,8 @@ void setup()
 // return position
 void loop() 
 {
-  delay(1000);
-  Serial.println("loop");
+  //delay(1000);
+  //Serial.println("loop");
   
   run = 1;
   
@@ -42,6 +42,116 @@ void loop()
     Serial.println("get Serial");
     // read the incoming byte:
     instring = Serial.readString();
+    int servo_num = 0;
+    for (int i = 0; i < instring.length();i++)
+    {
+      if (instring[i] == 'r')
+      {
+        servo_num = int(instring[i+1])-48;
+        Serial.print("servo ");
+        Serial.print(instring[i+1]);
+        Serial.print("'s postion: ");
+        Serial.println(GetPosition(servo_num));
+        i++;
+      }
+      else if ((instring[i] == '1' )
+                || (instring[i] == '2' )
+                || (instring[i] == '3' )
+                || (instring[i] == '4' )
+                || (instring[i] == '5' )
+                || (instring[i] == '6' )
+                || (instring[i] == '8' )
+                )
+      { 
+        Serial.print("get servo num: ");
+        Serial.println(instring[i]);
+        servo_num = int(instring[i])-48;
+        String desire_pos = "";
+        i++;
+        while (instring[i] != 'b')
+        {
+          desire_pos += instring[i];
+          i++;
+        }
+        Serial.print("desire pos: ");
+        Serial.println(desire_pos);
+        int temp = desire_pos.toInt();
+        Serial.print("temp: ");
+        Serial.println(temp);
+        if (instring[i] == '2' )
+        {
+          SetPosition(2,temp);
+          SetPosition(3,1024-temp);
+        }
+        else if (instring[i] == '3' )
+        {
+          SetPosition(3,temp);
+          SetPosition(2,1024-temp);
+        }
+        else if (instring[i] == '4' )
+        {
+          SetPosition(4,temp);
+          SetPosition(5,1024-temp);
+        }
+        else if (instring[i] == '5' )
+        {
+          SetPosition(5,temp);
+          SetPosition(4,1024-temp);
+        }
+        else
+        {
+          SetPosition(servo_num,temp);
+        }
+      }
+    }
+    Serial.flush(); 
+  }
+    /*
+    //count num of commands
+    unsigned char count_b = 0;
+    Serial.print("initialcount_b: ");
+    Serial.println(count_b);
+    for (int i = 0; i < instring.length();i++)
+    {
+      if (instring[i] == 'b') count_b ++;
+    }
+    Serial.print("latter count_b: ");
+    Serial.println(count_b);
+    // create an array for command info
+    int data[count_b+1];
+    Serial.print("size of data: ");
+    Serial.println(sizeof(data)/2);
+    if (count_b == 0)
+    {
+      data[0] = instring.toInt();
+    }
+    else 
+    { 
+      unsigned char index = 0;
+      String str = "";
+      for (int i = 0; i < instring.length()-1; i++)
+      {
+        
+        if (instring[i] == 'b') 
+        {
+          data[index] = str.toInt();
+          index ++;
+          str = "";
+        }
+        else
+        {
+         
+          str += instring[i];
+        }
+      } 
+      data[index] = str.toInt();
+    }
+    for (int i = 0; i < sizeof(data)/2;i++)
+    {
+      Serial.print("data: ");
+      Serial.println(data[i]);
+    }
+  }
     
     // say what you got:
     Serial.print("I received: ");
@@ -190,6 +300,7 @@ void loop()
     }
     Serial.flush(); //clear the serial input buffer 
   }
+  */
  
   
 }  
