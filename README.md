@@ -9,9 +9,7 @@ example:
 
   output: move servo 1 from current position to position 400
           
-          move servo 2 from current position to position 300
-          
-          move servo 4 from current position to position 500
+          move servo 2 from current position to position 300 \n move servo 4 from current position to position 500
   
   input: "r1"
 
