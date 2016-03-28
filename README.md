@@ -5,10 +5,12 @@ able to control the robot arm through serial communicaiton
 
 example:
 
-  input: "1512"
+  input: "1400b2300b4500b"
 
-  output: move servo 1 from current position to position 512
+  output: move servo 1 from current position to position 400
+          move servo 2 from current position to position 300
+          move servo 4 from current position to position 500
   
-  input: "23512"
+  input: "r1"
 
-  output: move servo 2 and servo 3 from their current positions to position 512
+  output: current position of servo 1
