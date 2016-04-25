@@ -9,7 +9,7 @@ void setup()
   delay(100);
   Serial.begin(38400); //start serial communications at 38400bps
   delay(100);
-  
+  Serial.setTimeout(10);
   SetPosition(1,512);
   Serial.println("Set up done");
   delay(1000);
@@ -25,10 +25,15 @@ void setup()
 
 void loop() 
 {
-
+  /*
+  Serial.print("servo ");
+  Serial.print(1);
+  Serial.print("'s postion: ");
+  Serial.println(GetPosition(1));
+  */
   if (Serial.available() > 0) 
   {
-    Serial.println("get Serial");
+    //Serial.println("get Serial");
     // read the incoming byte:
     instring = Serial.readString();
     int servo_num = 0;
@@ -37,9 +42,9 @@ void loop()
       if (instring[i] == 'r')
       {
         servo_num = int(instring[i+1])-48;
-        Serial.print("servo ");
+        //Serial.print("servo ");
         Serial.print(instring[i+1]);
-        Serial.print("'s postion: ");
+        //Serial.print("'s postion: ");
         Serial.println(GetPosition(servo_num));
         i++;
       }
@@ -52,7 +57,7 @@ void loop()
                 || (instring[i] == '8' )
                 )
       { 
-        Serial.print("get servo num: ");
+        //Serial.print("get servo num: ");
         Serial.println(instring[i]);
         servo_num = int(instring[i])-48;
         String desire_pos = "";
@@ -62,11 +67,11 @@ void loop()
           desire_pos += instring[i];
           i++;
         }
-        Serial.print("desire pos: ");
-        Serial.println(desire_pos);
+        //Serial.print("desire pos: ");
+        //Serial.println(desire_pos);
         int temp = desire_pos.toInt();
-        Serial.print("temp: ");
-        Serial.println(temp);
+        //Serial.print("temp: ");
+        //Serial.println(temp);
         if (instring[i] == '2' )
         {
           SetPosition(2,temp);
