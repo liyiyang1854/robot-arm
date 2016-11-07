@@ -2,8 +2,8 @@
 
 //---------------------------------------------------------------
 union Data {
-   char bufc[10];
-   unsigned short int bufi[5];
+   char bufc[16];
+   unsigned short int bufi[8];
 };
 
 uint16_t desired_loc[]= {512, 512, 512, 512, 512};
@@ -14,32 +14,48 @@ boolean correctmsg = true;
 
 //---------------------------------------------------------------
 void go_to(){
-  for (int i = 0; i < 8; i++) {
-    if ((i != 2) && (i != 4) && (i != 6) ) {
-      cur_pos = GetPosition(i+1);
-      Serial.print("servo ");
-      Serial.print(i+1);
-      Serial.print("  cur pos:  ");
-      Serial.println(cur_pos);
-      if ( (cur_pos < desired_loc[i]-5) || (cur_pos > desired_loc[i]+5) ) {
-        if (i == 1) {
-          Serial.println("Move Servo 2");
-          SetPosition(i+1,desired_loc[i]);
-          SetPosition(i+2,1024-desired_loc[i]);
-        }
-        else if(i == 3) {
-          Serial.println("Move Servo 4");
-          SetPosition(i+1,desired_loc[i]);
-          SetPosition(i+2,1024-desired_loc[i]);
-        }
-        else {
-          Serial.println("Move Servo 1/6/8");
-          SetPosition(i+1,desired_loc[i]);
-        }
-      }
-    }  
+  //Joint 1
+  //Serial.println("Move Joint 1");
+  cur_pos = GetPosition(1);
+  //Serial.println(cur_pos);
+  //Serial.println(desired_loc[0]);
+  if ( (cur_pos < desired_loc[0]-5) || (cur_pos > desired_loc[0]+5) ) {
+    SetPosition(1,desired_loc[0]);
   }
-  //Serial.println("Reach the end of go to");
+  //Joint 4
+  //Serial.println("Move Joint 4");
+  cur_pos = GetPosition(6);
+  //Serial.println(cur_pos);
+  //Serial.println(desired_loc[3]);
+  if ( (cur_pos < desired_loc[3]-5) || (cur_pos > desired_loc[3]+5) ) {
+    SetPosition(6,desired_loc[3]);
+  }
+  //Joint 5
+  //Serial.println("Move Joint 5");
+  cur_pos = GetPosition(8);
+  //Serial.println(cur_pos);
+  //Serial.println(desired_loc[4]);
+  if ( (cur_pos < desired_loc[4]-5) || (cur_pos > desired_loc[4]+5) ) {
+    SetPosition(8,desired_loc[4]);
+  }
+  //Joint 2
+  //Serial.println("Move Joint 2");
+  cur_pos = GetPosition(2);
+  //Serial.println(cur_pos);
+  //Serial.println(desired_loc[1]);
+  if ( (cur_pos < desired_loc[1]-5) || (cur_pos > desired_loc[1]+5) ) {
+    SetPosition(2,desired_loc[1]); 
+    SetPosition(3,1024-desired_loc[1]);
+  }
+  //Joint 3
+  //Serial.println("Move Joint 3");
+  cur_pos = GetPosition(4);
+  //Serial.println(cur_pos);
+  //Serial.println(desired_loc[2]);
+  if ( (cur_pos < desired_loc[2]-5) || (cur_pos > desired_loc[2]+5) ) {
+    SetPosition(4,desired_loc[2]);
+    SetPosition(5,1024-desired_loc[2]);
+  } 
 }
 
 //---------------------------------------------------------------
@@ -51,45 +67,55 @@ void setup(){
 
 //---------------------------------------------------------------
 void loop(){
-  delay(10);
+  delay(1000);
   
   //----------------
   //SetPositions
   if (Serial.available() == 16) {
     union Data data;
-    
+    //Serial.println("have 16 bytes");
+    //Serial.println(Serial.available());
     //read
-    for (int i=0; i<16; ++i) {
-      data.bufc[i] = Serial.read();
-      if (data.bufc[i] == -1) --i;
-    }
+    int len = 0;
+    len = Serial.readBytes(data.bufc, 17);
     
+    //Serial.println("after read");
+    //Serial.println(len);
+    //Serial.println(data.bufi[0]);
     //check start
-    if (data.bufi[0] == -1) {
-      correctmsg = false;
-      Serial.println("-1");
-    } 
-    //check end
-    if (data.bufi[7] == 0xAA55) {
+    if (data.bufi[0] != -1) {
       correctmsg = false;
       Serial.println("-1");
     }
+    //Serial.println("start checked"); 
+    //check end
+    if (data.bufi[7] != -99) {
+      correctmsg = false;
+      Serial.println("-1");
+    }
+    //Serial.println("end checked");
     //calculate sum
     int sum = 0;
     for (int i=2; i<7; ++i) {
       sum = sum + data.bufi[i];
     }
+    //Serial.println("sum calculated");
     //check sum
     if (data.bufi[1] != sum) {
       correctmsg = false;
       Serial.println("-1");
     }
+    //Serial.println("sum checked");
     if (correctmsg) {
+      //Serial.println("before for loop");
       for (int i=0; i<5; i++) {
         desired_loc[i] = data.bufi[i+2];
+        //Serial.println(desired_loc[i]);
       }
-      //go_to();
+      //Serial.println("before goto");
+      go_to();
     }
+    //Serial.println("false");
     correctmsg = true;
   }
   //----------------
@@ -106,7 +132,7 @@ void loop(){
     //check num
     if (data.bufi[0] != -9999) {
       correctmsg = false;
-      Serial.println("-1");
+      //Serial.println("-1");
     }
     
     if (correctmsg) {
@@ -127,35 +153,11 @@ void loop(){
   //----------------
   //error msg
   else {
+    //Serial.println("else");
     while (Serial.available() > 0) {
+      //Serial.println("else");
       Serial.read();
     }
   }
   
 } // loop
-
-
-//---------------------------------------------------------------
-  /*
-    if (Serial.available() == 4){
-      // A READ JOINTS COMMAND 
-      // READ ALL BYTES
-      //READ START BYTES (2 of them)
-      //READ END BYTES
-      // WRITE JOINTS OR SOMETHING FOR TESTING
-      
-      //Serial.println('A');
-    }    
-    else if (Serial.available() == 14 ){
-      // A SET JOINTS COMMAND
-      // READ ALL BYTES
-      // CHECK START BYTES
-      // CHECK END BYTES
-      // DO THE BEHAVIOR
-    }
-    else{ 
-      // FLUSH
-      Serial.flush();
-    }
-    */
-    //Serial.flush();
